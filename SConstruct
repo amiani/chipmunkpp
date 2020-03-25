@@ -44,7 +44,7 @@ env.Append(CXXFLAGS="-std=c++0x",
            CPPPATH=["src", env['chipmunk_dir'] + "/include/chipmunk"])
 lib = env.Library(source=Glob("src/*.cpp") + Glob("src/chipmunkpp/*.cpp"),
                   target="chipmunk++")
-chipmunk = env.Command(os.path.join(env["chipmunk_dir"], "src/libchipmunk.a"), None,
+chipmunk = env.Command(os.path.join(env["chipmunk_dir"], "build/src/libchipmunk.a"), None,
 	"cd " + env["chipmunk_dir"] + "; "
 	"cmake -D BUILD_DEMOS=OFF -D BUILD_SHARED=OFF -D CMAKE_BUILD_TYPE=Release .; "
 	"make -j{}".format(env.GetOption("num_jobs")))

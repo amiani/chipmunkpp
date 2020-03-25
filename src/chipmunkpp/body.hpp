@@ -28,6 +28,10 @@ namespace cp {
 		Vect getVelocity() const;
 		void setVelocity(Vect velocity);
 
+    void setAngle(Float a);
+
+    void applyForceAtLocalPoint(Vect force, Vect point);
+
 		DataPointer getUserData() const;
 		void setUserData(DataPointer);
 	private:

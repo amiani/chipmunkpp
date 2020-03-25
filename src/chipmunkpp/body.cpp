@@ -38,6 +38,14 @@ namespace cp {
 		cpBodySetVelocity(body, velocity);
 	}
 
+  void Body::setAngle(Float a) {
+    cpBodySetAngle(body, a);
+  }
+
+  void Body::applyForceAtLocalPoint(Vect force, Vect point) {
+    cpBodyApplyForceAtLocalPoint(body, force, point);
+  }
+
 	DataPointer Body::getUserData() const {
 		return cpBodyGetUserData(body);
 	}
