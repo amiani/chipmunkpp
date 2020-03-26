@@ -195,6 +195,10 @@ namespace cp {
 	bool Vect::near(Vect v1, Vect v2, Float dist) {
 		return (v1-v2).lengthSq() < dist * dist;
 	}
+
+  Float Vect::toAngle(const Vect v) {
+    return cpvtoangle(v);
+  }
 }
 
 std::ostream& operator<<(std::ostream& out, const cp::Vect& vec)
