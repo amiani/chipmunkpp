@@ -28,7 +28,10 @@ namespace cp {
 		Vect getVelocity() const;
 		void setVelocity(Vect velocity);
 
+    Float getAngle() const;
     void setAngle(Float a);
+
+    Vect worldToLocal(Vect point);
 
     void applyForceAtLocalPoint(Vect force, Vect point);
 
