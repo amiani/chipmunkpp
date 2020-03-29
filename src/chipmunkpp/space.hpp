@@ -35,11 +35,14 @@ namespace cp {
 		std::shared_ptr<Shape> segmentQueryFirst(Vect a, Vect b, Layers, Group, SegmentQueryInfo* = nullptr) const;
 		std::shared_ptr<Shape> pointQueryFirst(Vect p, Layers, Group) const;
 
+    cpCollisionHandler* addDefaultCollisionHandler();
 		void addCollisionHandler(CollisionType a, CollisionType b,
 		                         std::function<int(Arbiter, Space&)> begin,
 		                         std::function<int(Arbiter, Space&)> preSolve,
 		                         std::function<void(Arbiter, Space&)> postSolve,
 		                         std::function<void(Arbiter, Space&)> separate);
+    
+
 	private:
 		Space(const Space&);
 		const Space& operator=(const Space&);

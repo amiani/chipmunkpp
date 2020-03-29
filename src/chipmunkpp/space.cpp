@@ -123,6 +123,10 @@ namespace cp {
 		return data.separate(arb, data.self);
 	}
 
+  cpCollisionHandler* Space::addDefaultCollisionHandler() {
+    return cpSpaceAddDefaultCollisionHandler(space);
+  }
+
 	void Space::addCollisionHandler(CollisionType a, CollisionType b,
 	                                std::function<int(Arbiter, Space&)> begin,
 	                                std::function<int(Arbiter, Space&)> preSolve,
