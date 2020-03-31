@@ -136,12 +136,28 @@ namespace cp {
     cpHandler->beginFunc = helperBegin;
   }
 
+  void Space::addBeginCollisionHandler(CollisionType t, std::function<int(Arbiter, Space&)> begin) {
+    auto pair = wildcardHandlers.emplace(t, std::make_unique<CollisionHandler>(t, *this));
+    auto& handler = pair.first->second;
+    handler->begin = begin;
+    auto cpWildcard = cpSpaceAddWildcardHandler(space, t);
+    cpWildcard->beginFunc = helperBegin;
+  }
+
 	void Space::addPreSolveCollisionHandler(CollisionType a, CollisionType b, std::function<int(Arbiter, Space&)> preSolve) {
     auto pair = collisionHandlers.emplace(std::make_pair(a, b), std::make_unique<CollisionHandler>(a, b, *this));
     auto& handler = pair.first->second;
     handler->preSolve = preSolve;
     auto cpHandler = cpSpaceAddCollisionHandler(handler->space, a, b);
-    cpHandler->beginFunc = helperPreSolve;
+    cpHandler->preSolveFunc = helperPreSolve;
+  }
+
+  void Space::addPreSolveCollisionHandler(CollisionType t, std::function<int(Arbiter, Space&)> preSolve) {
+    auto pair = wildcardHandlers.emplace(t, std::make_unique<CollisionHandler>(t, *this));
+    auto& handler = pair.first->second;
+    handler->preSolve = preSolve;
+    auto cpHandler = cpSpaceAddWildcardHandler(handler->space, t);
+    cpHandler->preSolveFunc = helperPreSolve;
   }
 
 	void Space::addPostSolveCollisionHandler(CollisionType a, CollisionType b, std::function<int(Arbiter, Space&)> postSolve) {
@@ -149,6 +165,14 @@ namespace cp {
     auto& handler = pair.first->second;
     handler->postSolve = postSolve;
     auto cpHandler = cpSpaceAddCollisionHandler(handler->space, a, b);
+    cpHandler->postSolveFunc = helperPostSolve;
+  }
+
+  void Space::addPostSolveCollisionHandler(CollisionType t, std::function<int(Arbiter, Space&)> postSolve) {
+    auto pair = wildcardHandlers.emplace(t, std::make_unique<CollisionHandler>(t, *this));
+    auto& handler = pair.first->second;
+    handler->postSolve = postSolve;
+    auto cpHandler = cpSpaceAddWildcardHandler(handler->space, t);
     cpHandler->postSolveFunc = helperPostSolve;
   }
 
@@ -160,8 +184,21 @@ namespace cp {
     cpHandler->separateFunc = helperSeparate;
   }
 
+  void Space::addSeparateCollisionHandler(CollisionType t, std::function<int(Arbiter, Space&)> separate) {
+    auto pair = wildcardHandlers.emplace(t, std::make_unique<CollisionHandler>(t, *this));
+    auto& handler = pair.first->second;
+    handler->separate = separate;
+    auto cpHandler = cpSpaceAddWildcardHandler(handler->space, t);
+    cpHandler->separateFunc = helperSeparate;
+  }
+
   Space::CollisionHandler::CollisionHandler(CollisionType a, CollisionType b, Space& s) : space(s) {
     auto handler = cpSpaceAddCollisionHandler(s, a, b);
+    handler->userData = this;
+  }
+
+  Space::CollisionHandler::CollisionHandler(CollisionType t, Space& s) : space(s) {
+    auto handler = cpSpaceAddWildcardHandler(s, t);
     handler->userData = this;
   }
 /*

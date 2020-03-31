@@ -39,13 +39,13 @@ namespace cp {
 		std::shared_ptr<Shape> pointQueryFirst(Vect p, Layers, Group) const;
 
 		void addBeginCollisionHandler(CollisionType a, CollisionType b, std::function<int(Arbiter, Space&)> begin);
+		void addBeginCollisionHandler(CollisionType t, std::function<int(Arbiter, Space&)> begin);
 		void addPreSolveCollisionHandler(CollisionType a, CollisionType b, std::function<int(Arbiter, Space&)> preSolve);
+		void addPreSolveCollisionHandler(CollisionType t, std::function<int(Arbiter, Space&)> preSolve);
 		void addPostSolveCollisionHandler(CollisionType a, CollisionType b, std::function<int(Arbiter, Space&)> postSolve);
+		void addPostSolveCollisionHandler(CollisionType t, std::function<int(Arbiter, Space&)> postSolve);
 		void addSeparateCollisionHandler(CollisionType a, CollisionType b, std::function<int(Arbiter, Space&)> separate);
-		void addBeginWildcardHandler(CollisionType t, std::function<int(Arbiter, Space&)> begin);
-		void addPreSolveWildcardHandler(CollisionType t, std::function<int(Arbiter, Space&)> preSolve);
-		void addPostSolveWildcardHandler(CollisionType t, std::function<int(Arbiter, Space&)> postSolve);
-		void addSeparateWildcardHandler(CollisionType t, std::function<int(Arbiter, Space&)> separate);
+		void addSeparateCollisionHandler(CollisionType t, std::function<int(Arbiter, Space&)> separate);
     cpCollisionHandler* addDefaultCollisionHandler();
 
 	private:
@@ -65,6 +65,7 @@ namespace cp {
 
 		struct CollisionHandler {
       CollisionHandler(CollisionType a, CollisionType b, Space& s);
+      CollisionHandler(CollisionType t, Space& s);
       std::function<int(Arbiter, Space&)> begin;
       std::function<int(Arbiter, Space&)> preSolve;
       std::function<void(Arbiter, Space&)> postSolve;
@@ -73,6 +74,7 @@ namespace cp {
 		};
 
 		std::map<std::pair<CollisionType, CollisionType>, std::unique_ptr<CollisionHandler>> collisionHandlers;
+    std::map<CollisionType, std::unique_ptr<CollisionHandler>> wildcardHandlers;
 
 		static cpBool helperBegin(cpArbiter* arb, cpSpace* s, void* d);
 		static cpBool helperPreSolve(cpArbiter* arb, cpSpace* s, void* d);
