@@ -30,18 +30,23 @@ namespace cp {
 		Vect getGravity() const;
 		void setGravity(const Vect&);
 
+    Float getDamping();
+    void setDamping(const Float);
+
 		void step(Float);
 		void segmentQuery(Vect a, Vect b, Layers, Group, SegmentQueryFunc) const;
 		std::shared_ptr<Shape> segmentQueryFirst(Vect a, Vect b, Layers, Group, SegmentQueryInfo* = nullptr) const;
 		std::shared_ptr<Shape> pointQueryFirst(Vect p, Layers, Group) const;
 
+		void addBeginCollisionHandler(CollisionType a, CollisionType b, std::function<int(Arbiter, Space&)> begin);
+		void addPreSolveCollisionHandler(CollisionType a, CollisionType b, std::function<int(Arbiter, Space&)> preSolve);
+		void addPostSolveCollisionHandler(CollisionType a, CollisionType b, std::function<int(Arbiter, Space&)> postSolve);
+		void addSeparateCollisionHandler(CollisionType a, CollisionType b, std::function<int(Arbiter, Space&)> separate);
+		void addBeginWildcardHandler(CollisionType t, std::function<int(Arbiter, Space&)> begin);
+		void addPreSolveWildcardHandler(CollisionType t, std::function<int(Arbiter, Space&)> preSolve);
+		void addPostSolveWildcardHandler(CollisionType t, std::function<int(Arbiter, Space&)> postSolve);
+		void addSeparateWildcardHandler(CollisionType t, std::function<int(Arbiter, Space&)> separate);
     cpCollisionHandler* addDefaultCollisionHandler();
-		void addCollisionHandler(CollisionType a, CollisionType b,
-		                         std::function<int(Arbiter, Space&)> begin,
-		                         std::function<int(Arbiter, Space&)> preSolve,
-		                         std::function<void(Arbiter, Space&)> postSolve,
-		                         std::function<void(Arbiter, Space&)> separate);
-    
 
 	private:
 		Space(const Space&);
@@ -58,24 +63,19 @@ namespace cp {
 			SegmentQueryFunc& func;
 		};
 
-		struct CallbackData {
-			std::function<int(Arbiter, Space&)> begin;
-			std::function<int(Arbiter, Space&)> preSolve;
-			std::function<void(Arbiter, Space&)> postSolve;
-			std::function<void(Arbiter, Space&)> separate;
-			Space& self;
-
-			CallbackData(std::function<int(Arbiter, Space&)> begin, std::function<int(Arbiter, Space&)> preSolve,
-			             std::function<void(Arbiter, Space&)> postSolve, std::function<void(Arbiter, Space&)> separate,
-			             Space& self)
-			: begin(begin), preSolve(preSolve), postSolve(postSolve), separate(separate), self(self) {
-			}
+		struct CollisionHandler {
+      CollisionHandler(CollisionType a, CollisionType b, Space& s);
+      std::function<int(Arbiter, Space&)> begin;
+      std::function<int(Arbiter, Space&)> preSolve;
+      std::function<void(Arbiter, Space&)> postSolve;
+      std::function<void(Arbiter, Space&)> separate;
+      Space& space;
 		};
 
-		std::map<std::pair<CollisionType, CollisionType>, std::unique_ptr<CallbackData>> callbackDatas;
+		std::map<std::pair<CollisionType, CollisionType>, std::unique_ptr<CollisionHandler>> collisionHandlers;
 
-		static int helperBegin(cpArbiter* arb, cpSpace* s, void* d);
-		static int helperPreSolve(cpArbiter* arb, cpSpace* s, void* d);
+		static cpBool helperBegin(cpArbiter* arb, cpSpace* s, void* d);
+		static cpBool helperPreSolve(cpArbiter* arb, cpSpace* s, void* d);
 		static void helperPostSolve(cpArbiter* arb, cpSpace* s, void* d);
 		static void helperSeparate(cpArbiter* arb, cpSpace* s, void* d);
 	public:

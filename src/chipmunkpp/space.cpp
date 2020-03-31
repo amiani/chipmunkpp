@@ -1,3 +1,4 @@
+#include <iostream>
 #include "space.hpp"
 #include "body.hpp"
 #include "arbiter.hpp"
@@ -103,43 +104,81 @@ namespace cp {
 		return findPtr(cpSpacePointQueryNearest(space, p, 100, filter, &i));
 	}
 
-	int Space::helperBegin(cpArbiter* arb, cpSpace* s, void* d) {
-		CallbackData& data = *reinterpret_cast<CallbackData*>(d);
-		return data.begin(arb, data.self);
+	cpBool Space::helperBegin(cpArbiter* arb, cpSpace* s, void* d) {
+		CollisionHandler& handler = *reinterpret_cast<CollisionHandler*>(d);
+		return handler.begin(arb, handler.space);
 	}
 
-	int Space::helperPreSolve(cpArbiter* arb, cpSpace* s, void* d) {
-		CallbackData& data = *reinterpret_cast<CallbackData*>(d);
-		return data.preSolve(arb, data.self);
+	cpBool Space::helperPreSolve(cpArbiter* arb, cpSpace* s, void* d) {
+		CollisionHandler& handler = *reinterpret_cast<CollisionHandler*>(d);
+		return handler.preSolve(arb, handler.space);
 	}
 
 	void Space::helperPostSolve(cpArbiter* arb, cpSpace* s, void* d) {
-		CallbackData& data = *reinterpret_cast<CallbackData*>(d);
-		return data.postSolve(arb, data.self);
+		CollisionHandler& handler = *reinterpret_cast<CollisionHandler*>(d);
+		return handler.postSolve(arb, handler.space);
 	}
 
 	void Space::helperSeparate(cpArbiter* arb, cpSpace* s, void* d) {
-		CallbackData& data = *reinterpret_cast<CallbackData*>(d);
-		return data.separate(arb, data.self);
+		CollisionHandler& handler = *reinterpret_cast<CollisionHandler*>(d);
+		return handler.separate(arb, handler.space);
 	}
 
   cpCollisionHandler* Space::addDefaultCollisionHandler() {
     return cpSpaceAddDefaultCollisionHandler(space);
   }
 
-	void Space::addCollisionHandler(CollisionType a, CollisionType b,
-	                                std::function<int(Arbiter, Space&)> begin,
-	                                std::function<int(Arbiter, Space&)> preSolve,
-	                                std::function<void(Arbiter, Space&)> postSolve,
-	                                std::function<void(Arbiter, Space&)> separate) {
-		auto data = new CallbackData(begin, preSolve, postSolve, separate, *this);
-		callbackDatas[std::make_pair(a, b)] = std::unique_ptr<CallbackData>(data);
-		/*cpSpaceAddCollisionHandler(space, a, b,
-		                           begin == nullptr ? nullptr : helperBegin,
-		                           preSolve == nullptr ? nullptr : helperPreSolve,
-		                           postSolve == nullptr ? nullptr : helperPostSolve,
-		                           separate == nullptr ? nullptr : helperSeparate,
-		                           data);*/
-	}
+	void Space::addBeginCollisionHandler(CollisionType a, CollisionType b, std::function<int(Arbiter, Space&)> begin) {
+    auto pair = collisionHandlers.emplace(std::make_pair(a, b), std::make_unique<CollisionHandler>(a, b, *this));
+    auto& handler = pair.first->second;
+    handler->begin = begin;
+    auto cpHandler = cpSpaceAddCollisionHandler(handler->space, a, b);
+    cpHandler->beginFunc = helperBegin;
+  }
 
+	void Space::addPreSolveCollisionHandler(CollisionType a, CollisionType b, std::function<int(Arbiter, Space&)> preSolve) {
+    auto pair = collisionHandlers.emplace(std::make_pair(a, b), std::make_unique<CollisionHandler>(a, b, *this));
+    auto& handler = pair.first->second;
+    handler->preSolve = preSolve;
+    auto cpHandler = cpSpaceAddCollisionHandler(handler->space, a, b);
+    cpHandler->beginFunc = helperPreSolve;
+  }
+
+	void Space::addPostSolveCollisionHandler(CollisionType a, CollisionType b, std::function<int(Arbiter, Space&)> postSolve) {
+    auto pair = collisionHandlers.emplace(std::make_pair(a, b), std::make_unique<CollisionHandler>(a, b, *this));
+    auto& handler = pair.first->second;
+    handler->postSolve = postSolve;
+    auto cpHandler = cpSpaceAddCollisionHandler(handler->space, a, b);
+    cpHandler->postSolveFunc = helperPostSolve;
+  }
+
+	void Space::addSeparateCollisionHandler(CollisionType a, CollisionType b, std::function<int(Arbiter, Space&)> separate) {
+    auto pair = collisionHandlers.emplace(std::make_pair(a, b), std::make_unique<CollisionHandler>(a, b, *this));
+    auto& handler = pair.first->second;
+    handler->separate = separate;
+    auto cpHandler = cpSpaceAddCollisionHandler(handler->space, a, b);
+    cpHandler->separateFunc = helperSeparate;
+  }
+
+  Space::CollisionHandler::CollisionHandler(CollisionType a, CollisionType b, Space& s) : space(s) {
+    auto handler = cpSpaceAddCollisionHandler(s, a, b);
+    handler->userData = this;
+  }
+/*
+  Space::CollisionHandler::CollisionHandler(
+    CollisionType a,
+    CollisionType b,
+    std::function<int(Arbiter, Space&)> begin,
+    std::function<int(Arbiter, Space&)> preSolve,
+    std::function<void(Arbiter, Space&)> postSolve,
+    std::function<void(Arbiter, Space&)> separate,
+    Space& space) : begin(begin), preSolve(preSolve), postSolve(postSolve), separate(separate), space(space) {
+    }
+  
+  void Space::CollisionHandler::onBegin(std::function<int(Arbiter, Space&)> begin) {
+    begin = begin;
+    auto handler = cpSpaceAddCollisionHandler(space, a, b);
+    handler->beginFunc = helperBegin;
+  }
+  */
 }
