@@ -39,7 +39,7 @@ if not env['verbose']:
 	env['LINKCOMSTR'] = "linking: $TARGET"
 	env['ARCOMSTR'] = "archiving: $TARGET"
 
-env.Append(CXXFLAGS="-std=c++0x",
+env.Append(CXXFLAGS="-std=c++14",
            CFLAGS="-std=c99",
            CPPPATH=["src", env['chipmunk_dir'] + "/include/chipmunk"])
 lib = env.Library(source=Glob("src/*.cpp") + Glob("src/chipmunkpp/*.cpp"),
