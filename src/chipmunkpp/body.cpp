@@ -22,6 +22,10 @@ namespace cp {
 		return body;
 	}
 
+  void Body::setType(cpBodyType type) {
+    cpBodySetType(body, type);
+  }
+
 	void Body::setPosition(Vect p) {
 		cpBodySetPosition(body, p);
 	}
@@ -61,4 +65,13 @@ namespace cp {
 	void Body::setUserData(DataPointer p) {
 		cpBodySetUserData(body, p);
 	}
+
+
+	KinematicBody::KinematicBody(cpFloat mass, cpFloat inertia) : Body(mass, inertia) {
+    cpBodySetType(body, cp::KINEMATIC);
+  }
+
+  KinematicBody::KinematicBody(cpBody* body) : Body(body) {
+    cpBodySetType(body, cp::KINEMATIC);
+  }
 }

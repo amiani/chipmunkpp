@@ -21,6 +21,9 @@ namespace cp {
 		explicit Body(cpBody*);
 		~Body();
 		operator cpBody*() const;
+
+    void setType(cpBodyType);
+
 		Vect getPosition() const;
 		void setPosition(Vect);
 
@@ -37,10 +40,16 @@ namespace cp {
 
 		DataPointer getUserData() const;
 		void setUserData(DataPointer);
-	private:
+  protected:
 		Body(const Body&);
 		const Body& operator=(const Body&);
 		cpBody* body;
 		bool owning;
 	};
+
+  class KinematicBody : public Body {
+  public:
+    KinematicBody(Float mass, Float inertia);
+		explicit KinematicBody(cpBody*);
+  };
 }
