@@ -6,6 +6,11 @@ namespace cp {
 	typedef cpFloat Float;
 	typedef cpCollisionType CollisionType;
 	typedef cpDataPointer DataPointer;
+  typedef cpShapeFilter Filter;
+  typedef cpBitmask Bitmask;
+  constexpr cpBodyType DYNAMIC = cpBodyType::CP_BODY_TYPE_DYNAMIC;
+  constexpr cpBodyType KINEMATIC = cpBodyType::CP_BODY_TYPE_KINEMATIC;
+  constexpr cpBodyType STATIC = cpBodyType::CP_BODY_TYPE_STATIC;
 
 	class Layers {
 	public:

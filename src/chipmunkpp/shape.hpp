@@ -25,6 +25,7 @@ namespace cp {
 		void setCollisionType(CollisionType);
 		CollisionType getCollisionType() const;
 		void setLayers(Layers);
+    void setFilter(Filter f);
 		void setOwning(bool);
 		void setUserData(DataPointer);
 		void setBody(std::shared_ptr<Body> body);

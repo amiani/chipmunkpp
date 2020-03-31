@@ -43,6 +43,10 @@ namespace cp {
 		return cpShapeGetCollisionType(shape);
 	}
 
+  void Shape::setFilter(Filter f) {
+    cpShapeSetFilter(shape, f);
+  }
+
 	void Shape::setUserData(DataPointer p) {
 		cpShapeSetUserData(shape, p);
 	}
