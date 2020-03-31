@@ -42,10 +42,10 @@ namespace cp {
 		void addBeginCollisionHandler(CollisionType t, std::function<int(Arbiter, Space&)> begin);
 		void addPreSolveCollisionHandler(CollisionType a, CollisionType b, std::function<int(Arbiter, Space&)> preSolve);
 		void addPreSolveCollisionHandler(CollisionType t, std::function<int(Arbiter, Space&)> preSolve);
-		void addPostSolveCollisionHandler(CollisionType a, CollisionType b, std::function<int(Arbiter, Space&)> postSolve);
-		void addPostSolveCollisionHandler(CollisionType t, std::function<int(Arbiter, Space&)> postSolve);
-		void addSeparateCollisionHandler(CollisionType a, CollisionType b, std::function<int(Arbiter, Space&)> separate);
-		void addSeparateCollisionHandler(CollisionType t, std::function<int(Arbiter, Space&)> separate);
+		void addPostSolveCollisionHandler(CollisionType a, CollisionType b, std::function<void(Arbiter, Space&)> postSolve);
+		void addPostSolveCollisionHandler(CollisionType t, std::function<void(Arbiter, Space&)> postSolve);
+		void addSeparateCollisionHandler(CollisionType a, CollisionType b, std::function<void(Arbiter, Space&)> separate);
+		void addSeparateCollisionHandler(CollisionType t, std::function<void(Arbiter, Space&)> separate);
     cpCollisionHandler* addDefaultCollisionHandler();
 
 	private:

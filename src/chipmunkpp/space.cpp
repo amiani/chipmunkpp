@@ -106,22 +106,22 @@ namespace cp {
 
 	cpBool Space::helperBegin(cpArbiter* arb, cpSpace* s, void* d) {
 		CollisionHandler& handler = *reinterpret_cast<CollisionHandler*>(d);
-		return handler.begin(arb, handler.space);
+		return handler.begin(Arbiter(arb, handler.space), handler.space);
 	}
 
 	cpBool Space::helperPreSolve(cpArbiter* arb, cpSpace* s, void* d) {
 		CollisionHandler& handler = *reinterpret_cast<CollisionHandler*>(d);
-		return handler.preSolve(arb, handler.space);
+		return handler.preSolve(Arbiter(arb, handler.space), handler.space);
 	}
 
 	void Space::helperPostSolve(cpArbiter* arb, cpSpace* s, void* d) {
 		CollisionHandler& handler = *reinterpret_cast<CollisionHandler*>(d);
-		return handler.postSolve(arb, handler.space);
+		handler.postSolve(Arbiter(arb, handler.space), handler.space);
 	}
 
 	void Space::helperSeparate(cpArbiter* arb, cpSpace* s, void* d) {
 		CollisionHandler& handler = *reinterpret_cast<CollisionHandler*>(d);
-		return handler.separate(arb, handler.space);
+		handler.separate(Arbiter(arb, handler.space), handler.space);
 	}
 
   cpCollisionHandler* Space::addDefaultCollisionHandler() {
@@ -160,7 +160,7 @@ namespace cp {
     cpHandler->preSolveFunc = helperPreSolve;
   }
 
-	void Space::addPostSolveCollisionHandler(CollisionType a, CollisionType b, std::function<int(Arbiter, Space&)> postSolve) {
+	void Space::addPostSolveCollisionHandler(CollisionType a, CollisionType b, std::function<void(Arbiter, Space&)> postSolve) {
     auto pair = collisionHandlers.emplace(std::make_pair(a, b), std::make_unique<CollisionHandler>(a, b, *this));
     auto& handler = pair.first->second;
     handler->postSolve = postSolve;
@@ -168,7 +168,7 @@ namespace cp {
     cpHandler->postSolveFunc = helperPostSolve;
   }
 
-  void Space::addPostSolveCollisionHandler(CollisionType t, std::function<int(Arbiter, Space&)> postSolve) {
+  void Space::addPostSolveCollisionHandler(CollisionType t, std::function<void(Arbiter, Space&)> postSolve) {
     auto pair = wildcardHandlers.emplace(t, std::make_unique<CollisionHandler>(t, *this));
     auto& handler = pair.first->second;
     handler->postSolve = postSolve;
@@ -176,7 +176,7 @@ namespace cp {
     cpHandler->postSolveFunc = helperPostSolve;
   }
 
-	void Space::addSeparateCollisionHandler(CollisionType a, CollisionType b, std::function<int(Arbiter, Space&)> separate) {
+	void Space::addSeparateCollisionHandler(CollisionType a, CollisionType b, std::function<void(Arbiter, Space&)> separate) {
     auto pair = collisionHandlers.emplace(std::make_pair(a, b), std::make_unique<CollisionHandler>(a, b, *this));
     auto& handler = pair.first->second;
     handler->separate = separate;
@@ -184,7 +184,7 @@ namespace cp {
     cpHandler->separateFunc = helperSeparate;
   }
 
-  void Space::addSeparateCollisionHandler(CollisionType t, std::function<int(Arbiter, Space&)> separate) {
+  void Space::addSeparateCollisionHandler(CollisionType t, std::function<void(Arbiter, Space&)> separate) {
     auto pair = wildcardHandlers.emplace(t, std::make_unique<CollisionHandler>(t, *this));
     auto& handler = pair.first->second;
     handler->separate = separate;
