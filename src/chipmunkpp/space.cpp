@@ -42,6 +42,14 @@ namespace cp {
 		cpSpaceSetGravity(space, vect);
 	}
 
+  Float Space::getDamping() {
+    return cpSpaceGetDamping(space);
+  }
+
+  void Space::setDamping(const Float d) {
+    cpSpaceSetDamping(space, d);
+  }
+
 	void Space::add(shared_ptr<Body> body) {
 		cpSpaceAddBody(space, *body);
 		bodies.push_back(body);
