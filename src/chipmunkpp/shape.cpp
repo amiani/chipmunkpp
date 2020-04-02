@@ -13,6 +13,14 @@ namespace cp {
 		return shape;
 	}
 
+  bool Shape::getSensor() {
+    return cpShapeGetSensor(shape);
+  }
+
+  void Shape::setSensor(bool isSensor) {
+    cpShapeSetSensor(shape, isSensor);
+  }
+
 	bool Shape::pointQuery(Vect p) const {
 		return cpShapePointQuery(shape, p, nullptr) == cpTrue;
 	}

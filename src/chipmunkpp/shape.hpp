@@ -18,6 +18,8 @@ namespace cp {
 	public:
 		virtual ~Shape();
 		operator cpShape*() const;
+    bool getSensor();
+    void setSensor(bool isSensor);
 		bool pointQuery(Vect) const;
 		bool segmentQuery(Vect a, Vect b, SegmentQueryInfo* = nullptr);
 		void setFriction(Float);
