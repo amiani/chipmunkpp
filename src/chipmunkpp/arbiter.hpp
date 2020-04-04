@@ -15,6 +15,8 @@ namespace cp {
 
     bool callWildcardBeginA();
 
+    Float totalKineticEnergy();
+
 	private:
 		cpArbiter* arbiter;
     Space& space;

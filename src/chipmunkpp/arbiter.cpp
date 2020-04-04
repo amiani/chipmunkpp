@@ -21,4 +21,8 @@ namespace cp {
   bool Arbiter::callWildcardBeginA() {
     return cpArbiterCallWildcardBeginA(arbiter, space);
   }
+
+  Float Arbiter::totalKineticEnergy() {
+    return cpArbiterTotalKE(arbiter);
+  }
 }
