@@ -52,4 +52,9 @@ namespace cp {
     KinematicBody(Float mass, Float inertia);
 		explicit KinematicBody(cpBody*);
   };
+
+  class StaticBody : public Body {
+  public:
+    StaticBody();
+  };
 }

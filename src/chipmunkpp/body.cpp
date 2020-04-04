@@ -74,4 +74,8 @@ namespace cp {
   KinematicBody::KinematicBody(cpBody* body) : Body(body) {
     cpBodySetType(body, cp::KINEMATIC);
   }
+
+  StaticBody::StaticBody() : Body(0, 0) {
+    cpBodySetType(body, cp::STATIC);
+  }
 }
