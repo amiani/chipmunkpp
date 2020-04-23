@@ -42,6 +42,10 @@ namespace cp {
 		cpBodySetVelocity(body, velocity);
 	}
 
+	void Body::setTorque(Float torque) {
+	  cpBodySetTorque(body, torque);
+	}
+
   Float Body::getAngle() const {
     return cpBodyGetAngle(body);
   }
@@ -49,6 +53,10 @@ namespace cp {
   void Body::setAngle(Float a) {
     cpBodySetAngle(body, a);
   }
+
+  Float Body::getAngularVelocity() {
+	  return cpBodyGetAngularVelocity(body);
+	}
 
   Vect Body::worldToLocal(Vect point) {
     return cpBodyWorldToLocal(body, point);
