@@ -66,6 +66,16 @@ namespace cp {
     cpBodyApplyForceAtLocalPoint(body, force, point);
   }
 
+  void Body::setVelocityUpdateFunc(void(*velocityUpdate)(Body, Vect, Float, Float)) {
+	  cpBodySetVelocityUpdateFunc(body, [](cpBody* b, cpVect g, Float d, Float dt) {
+	    return velocityUpdate(b, g, d, dt);
+	  });
+	}
+
+	void Body::velocityUpdateHelper(cpBody* body, cpVect gravity, cpFloat damping, cpFloat dt) {
+    //velocityUpdate(this, gravity, damping, dt);
+	}
+
 	DataPointer Body::getUserData() const {
 		return cpBodyGetUserData(body);
 	}

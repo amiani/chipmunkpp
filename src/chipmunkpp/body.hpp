@@ -1,6 +1,7 @@
 #pragma once
 
 #include "vect.hpp"
+#include <functional>
 
 #include <chipmunk.h>
 
@@ -18,7 +19,7 @@ namespace cp {
 	public:
 		Body(Float mass, Float inertia);
 		Body(Body&&);
-		explicit Body(cpBody*);
+		Body(cpBody*);
 		~Body();
 		operator cpBody*() const;
 
@@ -42,6 +43,8 @@ namespace cp {
 
     void applyForceAtLocalPoint(Vect force, Vect point);
 
+    void setVelocityUpdateFunc(void(*)(Body, Vect, Float, Float));
+
 		DataPointer getUserData() const;
 		void setUserData(DataPointer);
   protected:
@@ -49,7 +52,12 @@ namespace cp {
 		const Body& operator=(const Body&);
 		cpBody* body;
 		bool owning;
-	};
+
+	private:
+	  void velocityUpdateHelper(cpBody*, cpVect, cpFloat, cpFloat);
+    //std::function<void(Body&, Vect, Float, Float)> velocityUpdate;
+    //void(*velocityUpdate)(Body&, Vect, Float, Float);
+  };
 
   class KinematicBody : public Body {
   public:
