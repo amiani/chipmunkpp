@@ -2,6 +2,7 @@
 
 namespace cp {
 	Body::Body(cpFloat mass, cpFloat inertia) : body(cpBodyNew(mass, inertia)), owning(true) {
+	  cpBodySetUserData(body, this);
 	}
 
 	Body::Body(Body&& other) : body(other.body), owning(other.owning) {
@@ -66,24 +67,21 @@ namespace cp {
     cpBodyApplyForceAtLocalPoint(body, force, point);
   }
 
-  void Body::setVelocityUpdateFunc(void(*velocityUpdate)(Body, Vect, Float, Float)) {
+  void Body::setVelocityUpdateFunc(std::function<void(Body&, Vect, Float, Float)> velocityUpdate) {
+	  this->velocityUpdate = velocityUpdate;
 	  cpBodySetVelocityUpdateFunc(body, [](cpBody* b, cpVect g, Float d, Float dt) {
-	    return velocityUpdate(b, g, d, dt);
+      auto self = static_cast<Body*>(cpBodyGetUserData(b));
+      self->velocityUpdate(*self, g, d, dt);
 	  });
+	}
+
+	void Body::updateVelocity(Vect gravity, Float damping, Float dt) {
+	  cpBodyUpdateVelocity(body, gravity, damping, dt);
 	}
 
 	void Body::velocityUpdateHelper(cpBody* body, cpVect gravity, cpFloat damping, cpFloat dt) {
     //velocityUpdate(this, gravity, damping, dt);
 	}
-
-	DataPointer Body::getUserData() const {
-		return cpBodyGetUserData(body);
-	}
-
-	void Body::setUserData(DataPointer p) {
-		cpBodySetUserData(body, p);
-	}
-
 
 	KinematicBody::KinematicBody(cpFloat mass, cpFloat inertia) : Body(mass, inertia) {
     cpBodySetType(body, cp::KINEMATIC);

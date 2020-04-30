@@ -4,18 +4,18 @@ namespace cp {
 	//Arbiter::Arbiter(cpArbiter* a) : arbiter(a) {}
   Arbiter::Arbiter(cpArbiter* a, Space& s) : arbiter(a), space(s) {}
 
-	Body Arbiter::getBodyA() {
+	Body& Arbiter::getBodyA() {
 		cpBody* a;
 		cpBody* b;
 		cpArbiterGetBodies(arbiter, &a, &b);
-		return Body(a);
+		return *static_cast<Body*>(cpBodyGetUserData(a));
 	}
 
-	Body Arbiter::getBodyB() {
+	Body& Arbiter::getBodyB() {
 		cpBody* a;
 		cpBody* b;
 		cpArbiterGetBodies(arbiter, &a, &b);
-		return Body(b);
+    return *static_cast<Body*>(cpBodyGetUserData(b));
 	}
 
   bool Arbiter::callWildcardBeginA() {

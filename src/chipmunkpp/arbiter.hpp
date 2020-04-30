@@ -10,8 +10,8 @@ namespace cp {
 	public:
 		//Arbiter(cpArbiter*);
 		Arbiter(cpArbiter*, Space&);
-		Body getBodyA();
-		Body getBodyB();
+		Body& getBodyA();
+		Body& getBodyB();
 
     bool callWildcardBeginA();
 

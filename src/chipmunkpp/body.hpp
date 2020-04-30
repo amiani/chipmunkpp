@@ -2,6 +2,7 @@
 
 #include "vect.hpp"
 #include <functional>
+#include <any>
 
 #include <chipmunk.h>
 
@@ -19,7 +20,7 @@ namespace cp {
 	public:
 		Body(Float mass, Float inertia);
 		Body(Body&&);
-		Body(cpBody*);
+		explicit Body(cpBody*);
 		~Body();
 		operator cpBody*() const;
 
@@ -43,10 +44,11 @@ namespace cp {
 
     void applyForceAtLocalPoint(Vect force, Vect point);
 
-    void setVelocityUpdateFunc(void(*)(Body, Vect, Float, Float));
+    void setVelocityUpdateFunc(std::function<void(Body&, Vect, Float, Float)>);
+    void updateVelocity(Vect gravity, Float damping, Float dt);
 
-		DataPointer getUserData() const;
-		void setUserData(DataPointer);
+    std::any userData;
+
   protected:
 		Body(const Body&);
 		const Body& operator=(const Body&);
@@ -55,8 +57,7 @@ namespace cp {
 
 	private:
 	  void velocityUpdateHelper(cpBody*, cpVect, cpFloat, cpFloat);
-    //std::function<void(Body&, Vect, Float, Float)> velocityUpdate;
-    //void(*velocityUpdate)(Body&, Vect, Float, Float);
+    std::function<void(Body&, Vect, Float, Float)> velocityUpdate;
   };
 
   class KinematicBody : public Body {
