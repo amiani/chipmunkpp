@@ -136,7 +136,7 @@ namespace cp {
     return cpSpaceAddDefaultCollisionHandler(space);
   }
 
-	void Space::addBeginCollisionHandler(CollisionType a, CollisionType b, std::function<int(Arbiter, Space&)> begin) {
+	void Space::addBeginCollisionHandler(CollisionType a, CollisionType b, std::function<bool(Arbiter, Space&)> begin) {
     auto pair = collisionHandlers.emplace(std::make_pair(a, b), std::make_unique<CollisionHandler>(a, b, *this));
     auto& handler = pair.first->second;
     handler->begin = begin;
@@ -145,7 +145,7 @@ namespace cp {
     cpHandler->beginFunc = helperBegin;
   }
 
-  void Space::addBeginCollisionHandler(CollisionType t, std::function<int(Arbiter, Space&)> begin) {
+  void Space::addBeginCollisionHandler(CollisionType t, std::function<bool(Arbiter, Space&)> begin) {
     auto pair = wildcardHandlers.emplace(t, std::make_unique<CollisionHandler>(t, *this));
     auto& handler = pair.first->second;
     handler->begin = begin;
@@ -154,7 +154,7 @@ namespace cp {
     cpWildcard->userData = handler.get();
   }
 
-	void Space::addPreSolveCollisionHandler(CollisionType a, CollisionType b, std::function<int(Arbiter, Space&)> preSolve) {
+	void Space::addPreSolveCollisionHandler(CollisionType a, CollisionType b, std::function<bool(Arbiter, Space&)> preSolve) {
     auto pair = collisionHandlers.emplace(std::make_pair(a, b), std::make_unique<CollisionHandler>(a, b, *this));
     auto& handler = pair.first->second;
     handler->preSolve = preSolve;
@@ -163,7 +163,7 @@ namespace cp {
     cpHandler->preSolveFunc = helperPreSolve;
   }
 
-  void Space::addPreSolveCollisionHandler(CollisionType t, std::function<int(Arbiter, Space&)> preSolve) {
+  void Space::addPreSolveCollisionHandler(CollisionType t, std::function<bool(Arbiter, Space&)> preSolve) {
     auto pair = wildcardHandlers.emplace(t, std::make_unique<CollisionHandler>(t, *this));
     auto& handler = pair.first->second;
     handler->preSolve = preSolve;
